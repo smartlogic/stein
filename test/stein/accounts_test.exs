@@ -45,7 +45,8 @@ defmodule Stein.AccountsTest do
     test "invalid email" do
       {:ok, _user} = create_user()
 
-      {:error, :invalid} = Accounts.validate_login(Repo, Schemas.User, "unknown@example.com", "password")
+      {:error, :invalid} =
+        Accounts.validate_login(Repo, Schemas.User, "unknown@example.com", "password")
     end
 
     test "invalid password" do

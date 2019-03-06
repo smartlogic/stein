@@ -19,7 +19,8 @@ defmodule Stein.Accounts do
             changeset
 
           false ->
-            Ecto.Changeset.put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(password))
+            hashed_password = Comeonin.Bcrypt.hashpwsalt(password)
+            Ecto.Changeset.put_change(changeset, :password_hash, hashed_password)
         end
 
       false ->
@@ -62,9 +63,11 @@ defmodule Stein.Accounts do
             {:error, :invalid}
 
           user ->
+            verified_at = DateTime.truncate(Timex.now(), :second)
+
             user
             |> Ecto.Changeset.change()
-            |> Ecto.Changeset.put_change(:email_verified_at, DateTime.truncate(Timex.now(), :second))
+            |> Ecto.Changeset.put_change(:email_verified_at, verified_at)
             |> Ecto.Changeset.put_change(:email_verification_token, nil)
             |> repo.update()
         end
