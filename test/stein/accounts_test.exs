@@ -2,6 +2,9 @@ defmodule Stein.AccountsTest do
   use Stein.DataCase
 
   alias Stein.Accounts
+  alias Stein.Schemas.User
+
+  doctest Accounts
 
   describe "hashing a password" do
     test "valid changeset and contains a password to hash" do
@@ -49,6 +52,32 @@ defmodule Stein.AccountsTest do
       {:ok, user} = create_user()
 
       {:error, :invalid} = Accounts.validate_login(Repo, Schemas.User, user.email, "password0")
+    end
+  end
+
+  describe "validating an email address" do
+    test "user found" do
+      {:ok, user} = create_user()
+
+      {:ok, user} = Accounts.verify_email(Repo, Schemas.User, user.email_verification_token)
+
+      assert user.email_verified_at
+    end
+
+    test "reset the token with a valid token" do
+      {:ok, user} = create_user()
+
+      {:ok, user} = Accounts.verify_email(Repo, Schemas.User, user.email_verification_token)
+
+      refute user.email_verification_token
+    end
+
+    test "token does not exist" do
+      {:error, :invalid} = Accounts.verify_email(Repo, Schemas.User, UUID.uuid4())
+    end
+
+    test "token is not a uuid" do
+      {:error, :invalid} = Accounts.verify_email(Repo, Schemas.User, "invalid")
     end
   end
 end

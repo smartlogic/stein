@@ -50,4 +50,42 @@ defmodule Stein.Accounts do
         {:error, :invalid}
     end
   end
+
+  @doc """
+  Verify an email is valid from the token
+  """
+  def verify_email(repo, struct, token) do
+    case Ecto.UUID.cast(token) do
+      {:ok, token} ->
+        case repo.get_by(struct, email_verification_token: token) do
+          nil ->
+            {:error, :invalid}
+
+          user ->
+            user
+            |> Ecto.Changeset.change()
+            |> Ecto.Changeset.put_change(:email_verified_at, DateTime.truncate(Timex.now(), :second))
+            |> Ecto.Changeset.put_change(:email_verification_token, nil)
+            |> repo.update()
+        end
+
+      :error ->
+        {:error, :invalid}
+    end
+  end
+
+  @doc """
+  Check if the user's email has been verified
+
+      iex> user = %User{email_verified_at: Timex.now()}
+      iex> Accounts.email_verified?(user)
+      true
+
+      iex> user = %User{}
+      iex> Accounts.email_verified?(user)
+      false
+  """
+  def email_verified?(%{email_verified_at: verified_at}) when verified_at != nil, do: true
+
+  def email_verified?(_), do: false
 end

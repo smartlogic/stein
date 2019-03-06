@@ -30,10 +30,12 @@ defmodule Stein.MixProject do
     [
       {:bcrypt_elixir, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:ecto, "~> 3.0", only: :test},
+      {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0", only: :test},
+      {:elixir_uuid, "~> 1.2", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:postgrex, ">= 0.0.0", only: :test},
+      {:timex, "~> 3.5"},
     ]
   end
 end
