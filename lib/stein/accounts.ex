@@ -112,7 +112,10 @@ defmodule Stein.Accounts do
             {:error, :invalid}
 
           user ->
-            verified_at = DateTime.truncate(Timex.now(), :second)
+            verified_at =
+              :os.system_time()
+              |> DateTime.from_unix!(:native)
+              |> DateTime.truncate(:second)
 
             user
             |> Ecto.Changeset.change()

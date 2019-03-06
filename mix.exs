@@ -36,7 +36,7 @@ defmodule Stein.MixProject do
       {:elixir_uuid, "~> 1.2", only: :test},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:postgrex, ">= 0.0.0", only: :test},
-      {:timex, "~> 3.5"}
+      {:timex, "~> 3.5", only: :test}
     ]
   end
 end
