@@ -49,7 +49,8 @@ defmodule Stein.MixProject do
     [
       maintainers: ["Eric Oestrich"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/smartlogic/stein"}
+      links: %{"GitHub" => "https://github.com/smartlogic/stein"},
+      exclude_patterns: [~r/priv\/repo/]
     ]
   end
 end
