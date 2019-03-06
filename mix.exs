@@ -10,6 +10,11 @@ defmodule Stein.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/smartlogic/stein",
       homepage_url: "https://github.com/smartlogic/stein",
+      package: package(),
+      docs: [
+        main: "readme",
+        extras: ["README.md"]
+      ],
       deps: deps()
     ]
   end
@@ -37,6 +42,14 @@ defmodule Stein.MixProject do
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:postgrex, ">= 0.0.0", only: :test},
       {:timex, "~> 3.5", only: :test}
+    ]
+  end
+
+  def package() do
+    [
+      maintainers: ["Eric Oestrich"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/smartlogic/stein"}
     ]
   end
 end
