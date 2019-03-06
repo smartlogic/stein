@@ -1,4 +1,6 @@
 defmodule Stein.TestHelpers do
+  @moduledoc false
+
   alias Stein.Repo
   alias Stein.Schemas.User
 

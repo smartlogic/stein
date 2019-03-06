@@ -29,6 +29,7 @@ defmodule Stein.MixProject do
   defp deps do
     [
       {:bcrypt_elixir, "~> 1.0"},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:comeonin, "~> 4.0"},
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0", only: :test},
