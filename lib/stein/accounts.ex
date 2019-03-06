@@ -3,6 +3,11 @@ defmodule Stein.Accounts do
   Helper functions around user accounts
   """
 
+  @type repo() :: Ecto.Repo.t()
+  @type schema() :: Ecto.Schema.t()
+  @type changeset() :: Ecto.Changeset.t()
+  @type uuid() :: String.t()
+
   @doc """
   Hash the changed password in a changeset
 
@@ -53,8 +58,11 @@ defmodule Stein.Accounts do
   end
 
   @doc """
-  Verify an email is valid from the token
+  Verify a user's email address from a token sent to their email address
+
+  This token should be a UUID, if it is not `{:error, :invalid}` will be returned.
   """
+  @spec verify_email(repo(), schema(), uuid()) :: {:ok, schema()} | {:error, changeset()}
   def verify_email(repo, struct, token) do
     case Ecto.UUID.cast(token) do
       {:ok, token} ->
