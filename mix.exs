@@ -10,6 +10,7 @@ defmodule Stein.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       source_url: "https://github.com/smartlogic/stein",
       homepage_url: "https://github.com/smartlogic/stein",
+      description: description(),
       package: package(),
       docs: [
         main: "readme",
@@ -43,6 +44,12 @@ defmodule Stein.MixProject do
       {:postgrex, ">= 0.0.0", only: :test},
       {:timex, "~> 3.5", only: :test}
     ]
+  end
+
+  def description() do
+    """
+    Stein contains common helper functions to our projects at SmartLogic.
+    """
   end
 
   def package() do
