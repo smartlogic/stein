@@ -54,7 +54,7 @@ defmodule Stein.Accounts do
             changeset
 
           false ->
-            hashed_password = Comeonin.Bcrypt.hashpwsalt(password)
+            hashed_password = Bcrypt.hash_pwd_salt(password)
             Ecto.Changeset.put_change(changeset, :password_hash, hashed_password)
         end
 
@@ -75,7 +75,7 @@ defmodule Stein.Accounts do
   def validate_login(repo, struct, email, password) do
     case repo.get_by(struct, email: email) do
       nil ->
-        Comeonin.Bcrypt.dummy_checkpw()
+        Bcrypt.no_user_verify()
         {:error, :invalid}
 
       user ->
@@ -84,7 +84,7 @@ defmodule Stein.Accounts do
   end
 
   defp check_password(user, password) do
-    case Comeonin.Bcrypt.checkpw(password, user.password_hash) do
+    case Bcrypt.verify_pass(password, user.password_hash) do
       true ->
         {:ok, user}
 

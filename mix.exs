@@ -4,7 +4,7 @@ defmodule Stein.MixProject do
   def project do
     [
       app: :stein,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -34,9 +34,8 @@ defmodule Stein.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:bcrypt_elixir, "~> 1.0"},
+      {:bcrypt_elixir, "~> 2.0"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:comeonin, "~> 4.0"},
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0", only: :test},
       {:elixir_uuid, "~> 1.2", only: :test},
