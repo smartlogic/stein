@@ -10,19 +10,32 @@ defmodule Stein.Accounts do
     field(:email, :string)
     field(:password, :string, virtual: true)
     field(:password_hash, :string)
-    field(:email_verification_token, :string)
+
+    field(:email_verification_token, Ecto.UUID)
     field(:email_verified_at, :utc_datetime)
+
+    field(:password_reset_token, Ecto.UUID)
+    field(:password_reset_expires_at, :utc_datetime)
   end
   ```
   """
 
-  @type user_schema() :: atom()
+  require Logger
+
+  alias Stein.Time
 
   @type email() :: String.t()
 
   @type password() :: String.t()
 
   @type password_hash() :: String.t()
+
+  @type password_params() :: %{
+          password: password(),
+          password_confirmation: password()
+        }
+
+  @type reset_token() :: String.t()
 
   @type user() :: %{
           email: email(),
@@ -31,6 +44,10 @@ defmodule Stein.Accounts do
           email_verification_token: Stein.uuid(),
           email_verified_at: DateTime.t()
         }
+
+  @type user_fun() :: (user() -> :ok)
+
+  @type user_schema() :: atom()
 
   @doc """
   Hash the changed password in a changeset
@@ -112,14 +129,9 @@ defmodule Stein.Accounts do
             {:error, :invalid}
 
           user ->
-            verified_at =
-              :os.system_time()
-              |> DateTime.from_unix!(:native)
-              |> DateTime.truncate(:second)
-
             user
             |> Ecto.Changeset.change()
-            |> Ecto.Changeset.put_change(:email_verified_at, verified_at)
+            |> Ecto.Changeset.put_change(:email_verified_at, Time.now())
             |> Ecto.Changeset.put_change(:email_verification_token, nil)
             |> repo.update()
         end
@@ -146,4 +158,81 @@ defmodule Stein.Accounts do
   def email_verified?(%{email_verified_at: verified_at}) when verified_at != nil, do: true
 
   def email_verified?(_), do: false
+
+  @doc """
+  Start the password reset process
+
+  Requires the user schema to contain:
+  - `password_reset_token`, type `:uuid`
+  - `password_reset_expires_at`, type `utc_datetime`
+  """
+  @spec start_password_reset(Stein.repo(), user_schema(), email(), user_fun()) :: :ok
+  def start_password_reset(repo, struct, email, success_fun \\ fn _user -> :ok end) do
+    case repo.get_by(struct, email: email) do
+      nil ->
+        :ok
+
+      user ->
+        user
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_change(:password_reset_token, UUID.uuid4())
+        |> Ecto.Changeset.put_change(:password_reset_expires_at, nil)
+        |> repo.update()
+        |> maybe_run_success(success_fun)
+
+        :ok
+    end
+  end
+
+  defp maybe_run_success({:ok, user}, success_fun), do: success_fun.(user)
+
+  defp maybe_run_success(_, _), do: :ok
+
+  @doc """
+  Finish resetting a password
+
+  Takes the token, checks for expiration, and then resets the password
+  """
+  @spec reset_password(Stein.repo(), user_schema(), reset_token(), password_params()) ::
+          {:ok, user()} | {:error, Ecto.Changeset.t()}
+  def reset_password(repo, struct, token, params) do
+    with {:ok, uuid} <- Ecto.UUID.cast(token),
+         {:ok, user} <- find_user_by_reset_token(repo, struct, uuid),
+         {:ok, user} <- check_password_reset_expired(user) do
+      user
+      |> password_changeset(params)
+      |> repo.update()
+    end
+  end
+
+  defp find_user_by_reset_token(repo, struct, uuid) do
+    case repo.get_by(struct, password_reset_token: uuid) do
+      nil ->
+        :error
+
+      user ->
+        {:ok, user}
+    end
+  end
+
+  defp check_password_reset_expired(user) do
+    case Time.after?(Time.now(), user.password_reset_expires_at) do
+      true ->
+        :error
+
+      false ->
+        {:ok, user}
+    end
+  end
+
+  defp password_changeset(user, params) do
+    user
+    |> Ecto.Changeset.cast(params, [:password, :password_confirmation])
+    |> Ecto.Changeset.validate_required([:password])
+    |> Ecto.Changeset.validate_confirmation(:password)
+    |> Ecto.Changeset.put_change(:password_reset_token, nil)
+    |> Ecto.Changeset.put_change(:password_reset_expires_at, nil)
+    |> hash_password()
+    |> Ecto.Changeset.validate_required([:password_hash])
+  end
 end

@@ -3,6 +3,7 @@ defmodule Stein.AccountsTest do
 
   alias Stein.Accounts
   alias Stein.Schemas.User
+  alias Stein.Time
 
   doctest Accounts
 
@@ -79,6 +80,59 @@ defmodule Stein.AccountsTest do
 
     test "token is not a uuid" do
       {:error, :invalid} = Accounts.verify_email(Repo, Schemas.User, "invalid")
+    end
+  end
+
+  describe "resetting password" do
+    test "email does not exist" do
+      :ok = Accounts.start_password_reset(Repo, Schemas.User, "not-found@example.com")
+    end
+
+    test "user found" do
+      {:ok, user} = create_user()
+
+      :ok = Accounts.start_password_reset(Repo, Schemas.User, user.email)
+
+      user = Repo.get(User, user.id)
+      assert user.password_reset_token
+    end
+
+    test "reset the token with a valid token" do
+      {:ok, user} = create_user()
+
+      :ok = Accounts.start_password_reset(Repo, Schemas.User, user.email)
+      user = Repo.get(User, user.id)
+
+      params = %{password: "new password", password_confirmation: "new password"}
+      {:ok, user} = Accounts.reset_password(Repo, Schemas.User, user.password_reset_token, params)
+
+      refute user.password_reset_token
+      refute user.password_reset_expires_at
+    end
+
+    test "no token found" do
+      params = %{password: "new password", password_confirmation: "new password"}
+      assert :error = Accounts.reset_password(Repo, Schemas.User, UUID.uuid4(), params)
+    end
+
+    test "token is not a UUID" do
+      params = %{password: "new password", password_confirmation: "new password"}
+      assert :error = Accounts.reset_password(Repo, Schemas.User, "a token", params)
+    end
+
+    test "token is expired" do
+      {:ok, user} = create_user()
+
+      :ok = Accounts.start_password_reset(Repo, Schemas.User, user.email)
+      user = Repo.get(User, user.id)
+
+      user
+      |> Ecto.Changeset.change(%{password_reset_expires_at: Time.now() |> Timex.shift(hours: -1)})
+      |> Repo.update()
+
+      params = %{password: "new password", password_confirmation: "new password"}
+
+      :error = Accounts.reset_password(Repo, Schemas.User, user.password_reset_token, params)
     end
   end
 end

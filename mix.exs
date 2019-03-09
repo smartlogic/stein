@@ -38,7 +38,7 @@ defmodule Stein.MixProject do
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0", only: :test},
-      {:elixir_uuid, "~> 1.2", only: :test},
+      {:elixir_uuid, "~> 1.2"},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:postgrex, ">= 0.0.0", only: :test},
       {:timex, "~> 3.5", only: :test}

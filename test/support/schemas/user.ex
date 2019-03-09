@@ -12,9 +12,12 @@ defmodule Stein.Schemas.User do
   schema "users" do
     field(:email, :string)
     field(:password, :string, virtual: true)
+    field(:password_confirmation, :string, virtual: true)
     field(:password_hash, :string)
     field(:email_verification_token, :string)
     field(:email_verified_at, :utc_datetime)
+    field(:password_reset_token, Ecto.UUID)
+    field(:password_reset_expires_at, :utc_datetime)
   end
 
   def changeset(struct, params) do
