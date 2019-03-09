@@ -162,6 +162,9 @@ defmodule Stein.Accounts do
   @doc """
   Start the password reset process
 
+  On successful start of reset, the success function will be called. This can be
+  used to send the password reset email.
+
   Requires the user schema to contain:
   - `password_reset_token`, type `:uuid`
   - `password_reset_expires_at`, type `utc_datetime`
