@@ -39,7 +39,10 @@ defmodule Stein.MixProject do
       {:ecto, "~> 3.0"},
       {:ecto_sql, "~> 3.0", only: :test},
       {:elixir_uuid, "~> 1.2"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:plug, "~> 1.7"},
       {:postgrex, ">= 0.0.0", only: :test},
       {:timex, "~> 3.5", only: :test}
     ]
