@@ -30,6 +30,8 @@ defmodule Stein.Storage do
 
   @doc """
   Download files from remote storage
+
+  *Note*: this creates a temporary file and must be cleaned up manually
   """
   def download(key) do
     backend().download(key)
