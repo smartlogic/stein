@@ -6,7 +6,7 @@ defmodule Stein.Pagination do
 
       iex> Stein.Pagination.paginate(Repo, query, %{page: 1, per: 10})
       %{
-        page: [],
+        page: [...],
         pagination: %Stein.Pagination.Meta{
           current: 1,
           total: 2,
