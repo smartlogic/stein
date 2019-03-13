@@ -11,7 +11,7 @@ defmodule Stein.Storage.Temp do
   def create(opts) do
     File.mkdir_p(@tmp_dir)
 
-    filename = 
+    filename =
       [timestamp(), opts[:extname]]
       |> Enum.reject(&is_nil/1)
       |> Enum.join("")

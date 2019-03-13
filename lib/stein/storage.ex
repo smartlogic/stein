@@ -8,9 +8,16 @@ defmodule Stein.Storage do
   alias Stein.Storage.MockBackend
   alias Stein.Storage.S3Backend
 
-  @type file :: String.t()
+  @type file :: FileUpload.t()
+
   @type key :: String.t()
+
+  @type map_file :: %{path: String.t()}
+
+  @type opts :: Keyword.t()
+
   @type path :: Path.t()
+
   @type url :: String.t()
 
   @callback delete(key()) :: :ok
@@ -24,6 +31,7 @@ defmodule Stein.Storage do
   @doc """
   Delete files from remote storage
   """
+  @spec delete(key()) :: :ok
   def delete(key) do
     backend().delete(key)
   end
@@ -33,6 +41,7 @@ defmodule Stein.Storage do
 
   *Note*: this creates a temporary file and must be cleaned up manually
   """
+  @spec download(key()) :: {:ok, path()}
   def download(key) do
     backend().download(key)
   end
@@ -40,6 +49,7 @@ defmodule Stein.Storage do
   @doc """
   Upload files to the remote storage
   """
+  @spec upload(file(), key(), opts()) :: :ok | {:error, :check_extensions} | {:error, :uploading}
   def upload(file, key, opts) do
     path = prep_file(file)
 
@@ -64,8 +74,31 @@ defmodule Stein.Storage do
   @doc """
   Get the remote url for viewing an uploaded file
   """
+  @spec url(key()) :: url()
   def url(key) do
     backend().url(key)
+  end
+
+  @doc """
+  Prepare a file for upload to the backend
+
+  Must be a `Stein.Storage.FileUpload`, `Plug.Upload`, or a map that
+  has the `:path` key.
+  """
+  @spec prep_file(file()) :: file()
+
+  @spec prep_file(Plug.Upload.t()) :: file()
+
+  @spec prep_file(map_file()) :: file()
+
+  def prep_file(upload = %FileUpload{}), do: upload
+
+  def prep_file(upload = %Plug.Upload{}) do
+    %FileUpload{filename: upload.filename, path: upload.path}
+  end
+
+  def prep_file(upload) when is_map(upload) do
+    %FileUpload{filename: Path.basename(upload.path), path: upload.path}
   end
 
   @doc false
@@ -80,15 +113,5 @@ defmodule Stein.Storage do
       :test ->
         MockBackend
     end
-  end
-
-  def prep_file(upload = %FileUpload{}), do: upload
-
-  def prep_file(upload = %Plug.Upload{}) do
-    %FileUpload{filename: upload.filename, path: upload.path}
-  end
-
-  def prep_file(upload) when is_map(upload) do
-    %FileUpload{filename: Path.basename(upload.path), path: upload.path}
   end
 end
