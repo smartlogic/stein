@@ -9,4 +9,9 @@ defmodule Stein do
   @type repo() :: Ecto.Repo.t()
 
   @type uuid() :: String.t()
+
+  @doc false
+  def config({:system, name}), do: System.get_env(name)
+
+  def conffig(value), do: value
 end

@@ -8,7 +8,7 @@ defmodule Stein.Storage.S3Backend do
 
   @behaviour Stein.Storage
 
-  def bucket(), do: Application.get_env(:stein, :storage)[:bucket]
+  def bucket(), do: Stein.config(Application.get_env(:stein, :storage)[:bucket])
 
   @impl true
   def delete(key) do
