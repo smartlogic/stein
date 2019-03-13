@@ -1,5 +1,8 @@
 # Stein
 
+[![Docs](https://img.shields.io/badge/docs-hexdocs-blue.svg)](https://hexdocs.pm/stein/readme.html)
+
+
 <p align="center">
 <img style="margin: auto" src="https://raw.githubusercontent.com/smartlogic/stein/master/stein.png" alt="Stein Logo" height=200 />
 </p>
