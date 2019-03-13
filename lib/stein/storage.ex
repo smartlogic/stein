@@ -94,11 +94,21 @@ defmodule Stein.Storage do
   def prep_file(upload = %FileUpload{}), do: upload
 
   def prep_file(upload = %Plug.Upload{}) do
-    %FileUpload{filename: upload.filename, path: upload.path}
+    %FileUpload{
+      filename: upload.filename,
+      extension: Path.extname(upload.filename),
+      path: upload.path
+    }
   end
 
   def prep_file(upload) when is_map(upload) do
-    %FileUpload{filename: Path.basename(upload.path), path: upload.path}
+    filename = Path.basename(upload.path)
+
+    %FileUpload{
+      filename: Path.basename(upload.path),
+      extension: Path.extname(filename),
+      path: upload.path
+    }
   end
 
   @doc false

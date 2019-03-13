@@ -5,8 +5,9 @@ defmodule Stein.Storage.FileUpload do
 
   @type t() :: %__MODULE__{
           filename: String.t(),
+          extension: String.t(),
           path: String.t()
         }
 
-  defstruct [:filename, :path]
+  defstruct [:filename, :extension, :path]
 end
