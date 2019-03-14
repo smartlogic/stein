@@ -37,7 +37,7 @@ defmodule Stein.Storage.FileBackend do
   end
 
   @impl true
-  def upload(file, key) do
+  def upload(file, key, _opts) do
     path = Path.join(local_folder(), "files/#{key}")
 
     dirname = Path.dirname(path)
@@ -53,7 +53,7 @@ defmodule Stein.Storage.FileBackend do
   end
 
   @impl true
-  def url(key) do
+  def url(key, _opts) do
     "/uploads/#{key}"
   end
 end

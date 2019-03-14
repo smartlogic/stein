@@ -13,5 +13,5 @@ defmodule Stein do
   @doc false
   def config({:system, name}), do: System.get_env(name)
 
-  def conffig(value), do: value
+  def config(value), do: value
 end

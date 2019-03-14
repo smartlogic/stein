@@ -24,9 +24,9 @@ defmodule Stein.Storage do
 
   @callback download(key()) :: {:ok, path()}
 
-  @callback upload(file(), key()) :: :ok | :error
+  @callback upload(file(), key(), opts()) :: :ok | :error
 
-  @callback url(key()) :: url()
+  @callback url(key(), opts()) :: url()
 
   @doc """
   Delete files from remote storage
@@ -54,7 +54,7 @@ defmodule Stein.Storage do
     path = prep_file(file)
 
     with {:ok, :extension} <- check_extensions(path, opts) do
-      backend().upload(path, key)
+      backend().upload(path, key, opts)
     end
   end
 
@@ -75,9 +75,9 @@ defmodule Stein.Storage do
   @doc """
   Get the remote url for viewing an uploaded file
   """
-  @spec url(key()) :: url()
-  def url(key) do
-    backend().url(key)
+  @spec url(key(), opts()) :: url()
+  def url(key, opts \\ []) do
+    backend().url(key, opts)
   end
 
   @doc """

@@ -14,8 +14,8 @@ defmodule Stein.Storage.MockBackend do
   end
 
   @impl true
-  def upload(_file, _key), do: :ok
+  def upload(_file, _key, _opts), do: :ok
 
   @impl true
-  def url(key), do: key
+  def url(key, _opts), do: key
 end

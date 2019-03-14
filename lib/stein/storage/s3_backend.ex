@@ -32,21 +32,42 @@ defmodule Stein.Storage.S3Backend do
   end
 
   @impl true
-  def upload(file, key) do
-    meta = [
-      {:cache_control, "public, max-age=31536000"},
-      {:acl, :public_read}
-    ]
-
+  def upload(file, key, opts) do
     bucket()
-    |> S3.put_object(key, File.read!(file.path), meta)
+    |> S3.put_object(key, File.read!(file.path), meta(opts))
     |> ExAws.request!()
 
     :ok
   end
 
+  defp meta(opts) do
+    meta = Keyword.get(opts, :meta, [])
+
+    case opts[:public] do
+      true ->
+        public_meta() ++ meta
+
+      _ ->
+        meta
+    end
+  end
+
+  defp public_meta() do
+    [
+      {:cache_control, "public, max-age=31536000"},
+      {:acl, :public_read}
+    ]
+  end
+
   @impl true
-  def url(key) do
-    "https://s3.amazonaws.com/#{bucket()}/#{key}"
+  def url(key, opts) do
+    case Keyword.has_key?(opts, :signed) do
+      true ->
+        config = ExAws.Config.new(:s3)
+        S3.presigned_url(config, :get, bucket(), key, opts[:signed])
+
+      false ->
+        "https://s3.amazonaws.com/#{bucket()}/#{key}"
+    end
   end
 end
