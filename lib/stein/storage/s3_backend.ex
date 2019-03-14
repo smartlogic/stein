@@ -67,7 +67,7 @@ defmodule Stein.Storage.S3Backend do
         S3.presigned_url(config, :get, bucket(), key, opts[:signed])
 
       false ->
-        "https://s3.amazonaws.com/#{bucket()}/#{key}"
+        "https://s3.amazonaws.com/#{bucket()}#{key}"
     end
   end
 end

@@ -10,6 +10,11 @@ defmodule Stein.Storage do
 
   @type file :: FileUpload.t()
 
+  @typedoc """
+  Key for where the document will be stored
+
+  Must start with a leading `/`
+  """
   @type key :: String.t()
 
   @type map_file :: %{path: String.t()}
