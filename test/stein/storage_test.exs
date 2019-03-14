@@ -13,6 +13,11 @@ defmodule Stein.StorageTest do
       file = %Storage.FileUpload{extension: ".png"}
       {:error, :invalid_extension} = Storage.check_extensions(file, extensions: [".jpg"])
     end
+
+    test "skip extension checks" do
+      file = %Storage.FileUpload{extension: ".jpg"}
+      {:ok, :extension} = Storage.check_extensions(file, [])
+    end
   end
 
   describe "preparing a file for upload" do

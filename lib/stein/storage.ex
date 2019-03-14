@@ -60,7 +60,13 @@ defmodule Stein.Storage do
 
   @doc false
   def check_extensions(file, opts) do
-    allowed_extensions = Keyword.get(opts, :extensions, [])
+    allowed_extensions = Keyword.get(opts, :extensions)
+    check_allowed_extensions(file, allowed_extensions)
+  end
+
+  defp check_allowed_extensions(_file, nil), do: {:ok, :extension}
+
+  defp check_allowed_extensions(file, allowed_extensions) do
     extension = String.downcase(file.extension)
 
     case extension in allowed_extensions do
