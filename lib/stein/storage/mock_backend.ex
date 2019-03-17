@@ -1,6 +1,8 @@
 defmodule Stein.Storage.MockBackend do
   @moduledoc """
   A no-op storage backend for testing
+
+  See `Stein.Storage` for more information about configuration available.
   """
 
   @behaviour Stein.Storage

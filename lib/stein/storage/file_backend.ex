@@ -1,19 +1,15 @@
 defmodule Stein.Storage.FileBackend do
   @moduledoc """
-  File uploads
+  Backend for using local file storage.
+
+  See `Stein.Storage` for more information about configuration available.
   """
 
   alias Stein.Storage.Temp
 
   @behaviour Stein.Storage
 
-  @doc """
-  The local upload storage folder
-
-  Defaults to Stein's `priv/files`. Configure with:
-
-      config :stein, :storage, file_backend_folder: Path.join(["tmp", "uploads"])
-  """
+  @doc false
   def local_folder() do
     config = Application.get_env(:stein, :storage, [])
     Keyword.get(config, :file_backend_folder) || :code.priv_dir(:stein)
@@ -53,6 +49,8 @@ defmodule Stein.Storage.FileBackend do
   end
 
   @impl true
+  def url("/" <> key, opts), do: url(key, opts)
+
   def url(key, _opts) do
     "/uploads/#{key}"
   end

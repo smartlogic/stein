@@ -1,6 +1,8 @@
 defmodule Stein.Storage.FileUpload do
   @moduledoc """
-  Struct for uploading files
+  Processed file struct for use in uploading.
+
+  Create with `Stein.Storage.prep_file/1`
   """
 
   @type t() :: %__MODULE__{

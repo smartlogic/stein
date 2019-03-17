@@ -1,6 +1,8 @@
 defmodule Stein.Storage.S3Backend do
   @moduledoc """
-  S3 uploads
+  Backend for uploading to S3 buckets.
+
+  See `Stein.Storage` for more information about configuration available.
   """
 
   alias ExAws.S3
@@ -8,6 +10,7 @@ defmodule Stein.Storage.S3Backend do
 
   @behaviour Stein.Storage
 
+  @doc false
   def bucket(), do: Stein.config(Application.get_env(:stein, :storage)[:bucket])
 
   @impl true
