@@ -67,7 +67,8 @@ defmodule Stein.Storage.S3Backend do
     case Keyword.has_key?(opts, :signed) do
       true ->
         config = ExAws.Config.new(:s3)
-        S3.presigned_url(config, :get, bucket(), key, opts[:signed])
+        {:ok, url} = S3.presigned_url(config, :get, bucket(), key, opts[:signed])
+        url
 
       false ->
         "https://s3.amazonaws.com/#{bucket()}#{key}"
