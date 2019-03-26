@@ -95,6 +95,7 @@ defmodule Stein.AccountsTest do
 
       user = Repo.get(User, user.id)
       assert user.password_reset_token
+      assert user.password_reset_expires_at
     end
 
     test "reset the token with a valid token" do

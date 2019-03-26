@@ -176,10 +176,12 @@ defmodule Stein.Accounts do
         :ok
 
       user ->
+        expires_at = DateTime.add(Time.now(), 3600, :second)
+
         user
         |> Ecto.Changeset.change()
         |> Ecto.Changeset.put_change(:password_reset_token, UUID.uuid4())
-        |> Ecto.Changeset.put_change(:password_reset_expires_at, nil)
+        |> Ecto.Changeset.put_change(:password_reset_expires_at, expires_at)
         |> repo.update()
         |> maybe_run_success(success_fun)
 
