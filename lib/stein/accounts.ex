@@ -240,4 +240,19 @@ defmodule Stein.Accounts do
     |> hash_password()
     |> Ecto.Changeset.validate_required([:password_hash])
   end
+
+  @doc """
+  Trim a field in a changeset if present
+
+  Calls `String.trim/1` on the field and replaces the value.
+  """
+  def trim_field(changeset, field) do
+    case Ecto.Changeset.get_change(changeset, field) do
+      nil ->
+        changeset
+
+      value ->
+        Ecto.Changeset.put_change(changeset, field, String.trim(value))
+    end
+  end
 end

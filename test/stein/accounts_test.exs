@@ -136,4 +136,15 @@ defmodule Stein.AccountsTest do
       :error = Accounts.reset_password(Repo, Schemas.User, user.password_reset_token, params)
     end
   end
+
+  describe "trimming a field" do
+    test "removes whitespace in the new value" do
+      {:ok, user} = create_user()
+      changeset = Ecto.Changeset.change(user, %{email: " email@example.com "})
+
+      changeset = Accounts.trim_field(changeset, :email)
+
+      assert changeset.changes[:email] == "email@example.com"
+    end
+  end
 end
