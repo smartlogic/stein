@@ -18,6 +18,7 @@ defmodule Stein.DataCase do
     quote do
       alias Stein.Repo
       alias Stein.Schemas
+      alias Stein.TestHelpers
 
       import Ecto
       import Ecto.Changeset

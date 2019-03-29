@@ -4,9 +4,18 @@ defmodule Stein.TestHelpers do
   alias Stein.Repo
   alias Stein.Schemas.User
 
-  def create_user() do
+  def create_user(attributes \\ %{}) do
+    attributes =
+      Map.merge(
+        %{
+          email: "user@example.com",
+          password: "password"
+        },
+        attributes
+      )
+
     %User{}
-    |> User.changeset(%{email: "user@example.com", password: "password"})
+    |> User.changeset(attributes)
     |> Repo.insert()
   end
 end

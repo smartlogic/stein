@@ -21,7 +21,9 @@ defmodule Stein.Accounts do
   """
 
   require Logger
+  require Ecto.Query
 
+  alias Ecto.Query
   alias Stein.Time
 
   @type email() :: String.t()
@@ -90,7 +92,15 @@ defmodule Stein.Accounts do
   @spec validate_login(Stein.repo(), user_schema(), email(), password()) ::
           {:error, :invalid} | {:ok, user()}
   def validate_login(repo, struct, email, password) do
-    case repo.get_by(struct, email: email) do
+    email = String.downcase(email)
+
+    user =
+      struct
+      |> Query.where([s], fragment("lower(?) = ?", s.email, ^email))
+      |> Query.limit(1)
+      |> repo.one()
+
+    case user do
       nil ->
         Bcrypt.no_user_verify()
         {:error, :invalid}

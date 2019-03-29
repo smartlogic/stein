@@ -43,6 +43,15 @@ defmodule Stein.AccountsTest do
       assert found_user.email == user.email
     end
 
+    test "different case email" do
+      {:ok, user} = TestHelpers.create_user(%{email: "useR@example.com"})
+
+      {:ok, found_user} =
+        Accounts.validate_login(Repo, Schemas.User, "User@example.com", "password")
+
+      assert found_user.email == user.email
+    end
+
     test "invalid email" do
       {:ok, _user} = create_user()
 
