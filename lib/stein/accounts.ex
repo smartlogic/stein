@@ -6,16 +6,43 @@ defmodule Stein.Accounts do
   should contain the following fields:
 
   ```elixir
-  schema "users" do
-    field(:email, :string)
-    field(:password, :string, virtual: true)
-    field(:password_hash, :string)
+  defmodule MyApp.Users.User do
+    # ...
 
-    field(:email_verification_token, Ecto.UUID)
-    field(:email_verified_at, :utc_datetime)
+    schema "users" do
+      field(:email, :string)
+      field(:password, :string, virtual: true)
+      field(:password_hash, :string)
 
-    field(:password_reset_token, Ecto.UUID)
-    field(:password_reset_expires_at, :utc_datetime)
+      field(:email_verification_token, Ecto.UUID)
+      field(:email_verified_at, :utc_datetime)
+
+      field(:password_reset_token, Ecto.UUID)
+      field(:password_reset_expires_at, :utc_datetime)
+    end
+
+    # ...
+  end
+  ```
+
+  A sample Ecto migration:
+
+  ```elixir
+  def change() do
+    create table(:users) do
+      add(:email, :string)
+      add(:password_hash, :string)
+
+      add(:email_verification_token, :uuid)
+      add(:email_verified_at, :utc_datetime)
+
+      add(:password_reset_token, :uuid)
+      add(:password_reset_expires_at, :utc_datetime)
+
+      timestamps()
+    end
+
+    create index(:users, ["lower(email)"], unique: true)
   end
   ```
   """
