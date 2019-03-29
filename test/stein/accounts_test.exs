@@ -67,6 +67,14 @@ defmodule Stein.AccountsTest do
   end
 
   describe "validating an email address" do
+    test "starting validation" do
+      changeset = Ecto.Changeset.change(%Schemas.User{}, %{})
+
+      changeset = Accounts.start_email_verification_changeset(changeset)
+
+      assert changeset.changes.email_verification_token
+    end
+
     test "user found" do
       {:ok, user} = create_user()
 

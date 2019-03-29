@@ -121,6 +121,16 @@ defmodule Stein.Accounts do
   end
 
   @doc """
+  Prepare a user for email validation
+
+  This should run as part of the create changeset when registering a new user
+  """
+  @spec start_email_verification_changeset(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def start_email_verification_changeset(changeset) do
+    Ecto.Changeset.put_change(changeset, :email_verification_token, UUID.uuid4())
+  end
+
+  @doc """
   Verify a user's email address from a token sent to their email address
 
   This token should be a UUID, if it is not `{:error, :invalid}` will be returned.
