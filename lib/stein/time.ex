@@ -28,4 +28,9 @@ defmodule Stein.Time do
         false
     end
   end
+
+  @doc """
+  Check if a time is before another time
+  """
+  def before?(time, other_time), do: !after?(time, other_time)
 end

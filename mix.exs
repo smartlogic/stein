@@ -44,7 +44,7 @@ defmodule Stein.MixProject do
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:plug, "~> 1.7"},
       {:postgrex, ">= 0.0.0", only: :test},
-      {:timex, "~> 3.5", only: :test}
+      {:timex, "~> 3.5"}
     ]
   end
 
