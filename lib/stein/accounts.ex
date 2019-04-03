@@ -154,7 +154,9 @@ defmodule Stein.Accounts do
   """
   @spec start_email_verification_changeset(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def start_email_verification_changeset(changeset) do
-    Ecto.Changeset.put_change(changeset, :email_verification_token, UUID.uuid4())
+    changeset
+    |> Ecto.Changeset.put_change(:email_verification_token, UUID.uuid4())
+    |> Ecto.Changeset.put_change(:email_verified_at, nil)
   end
 
   @doc """
