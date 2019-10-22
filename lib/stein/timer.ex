@@ -19,7 +19,7 @@ defmodule Stein.Timer do
     second = Keyword.get(runs_at, :second, 0)
 
     now
-    |> Timex.set([hour: hour, minute: minute, second: second])
+    |> Timex.set(hour: hour, minute: minute, second: second)
     |> maybe_shift_a_day(now)
     |> Timex.diff(now, :milliseconds)
   end
