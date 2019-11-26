@@ -107,5 +107,20 @@ defmodule Stein.TimerTest do
       # two days and an hour in milliseconds
       assert delay == 2 * 24 * 3600 * 1000 + 3600 * 1000
     end
+
+    test "the current time is the same time it's supposed to run, pick next week" do
+      # now is thursday, shift to next thursday
+
+      Enum.map(0..59, fn second ->
+        now =
+          Timex.now()
+          |> Timex.set(year: 2019, month: 10, day: 24, hour: 10, minute: 0, second: second)
+          |> DateTime.truncate(:second)
+
+        delay = Timer.calculate_weekly_cycle_delay(now, day: 4, hour: 10, minute: 0, second: second)
+
+        assert delay == 7 * 3600 * 24 * 1000
+      end)
+    end
   end
 end
