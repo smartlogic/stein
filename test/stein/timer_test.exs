@@ -16,7 +16,7 @@ defmodule Stein.TimerTest do
     end
 
     test "the current time is the same time it's supposed to run, pick tomorrow" do
-      Enum.map([0, 15, 45, 60], fn second ->
+      Enum.map(0..59, fn second ->
         now =
           Timex.now()
           |> Timex.set(hour: 6, minute: 0, second: second)

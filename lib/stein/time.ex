@@ -32,5 +32,13 @@ defmodule Stein.Time do
   @doc """
   Check if a time is before another time
   """
-  def before?(time, other_time), do: !after?(time, other_time)
+  def before?(time, other_time) do
+    case DateTime.compare(time, other_time) do
+      :lt ->
+        true
+
+      _ ->
+        false
+    end
+  end
 end
