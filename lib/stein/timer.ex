@@ -25,13 +25,17 @@ defmodule Stein.Timer do
   end
 
   defp maybe_shift_a_day(next_run, now) do
-    case Time.before?(now, next_run) do
+    case Time.before?(now, next_run) && !time_equal?(next_run, now) do
       true ->
         next_run
 
       false ->
         Timex.shift(next_run, days: 1)
     end
+  end
+
+  defp time_equal?(next_run, now) do
+    next_run.hour == now.hour && next_run.minute == now.minute && next_run.second == now.second
   end
 
   @doc """

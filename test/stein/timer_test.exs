@@ -15,6 +15,30 @@ defmodule Stein.TimerTest do
       assert delay == 36_000_000
     end
 
+    test "the current time is the same time it's supposed to run, pick tomorrow" do
+      Enum.map([0, 15, 45, 60], fn second ->
+        now =
+          Timex.now()
+          |> Timex.set(hour: 6, minute: 0, second: second)
+          |> DateTime.truncate(:second)
+
+        delay = Timer.calculate_daily_cycle_delay(now, hour: 6, minute: 0, second: second)
+
+        assert delay == 3600 * 24 * 1000
+      end)
+    end
+
+    test "same hour and minute but offset by seconds" do
+      now =
+        Timex.now()
+        |> Timex.set(hour: 6, minute: 0, second: 15)
+        |> DateTime.truncate(:second)
+
+      delay = Timer.calculate_daily_cycle_delay(now, hour: 6)
+
+      assert delay == (3600 * 24 - 15) * 1000
+    end
+
     test "process is rebooted same day but before cycle runs" do
       now =
         Timex.now()
