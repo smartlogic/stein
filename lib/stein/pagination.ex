@@ -54,7 +54,7 @@ defmodule Stein.Pagination do
 
     count =
       query
-      |> select([u], count(u.id))
+      |> select([u], count(u))
       |> exclude(:order_by)
       |> exclude(:preload)
       |> exclude(:group_by)
