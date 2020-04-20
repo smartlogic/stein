@@ -117,7 +117,8 @@ defmodule Stein.TimerTest do
           |> Timex.set(year: 2019, month: 10, day: 24, hour: 10, minute: 0, second: second)
           |> DateTime.truncate(:second)
 
-        delay = Timer.calculate_weekly_cycle_delay(now, day: 4, hour: 10, minute: 0, second: second)
+        delay =
+          Timer.calculate_weekly_cycle_delay(now, day: 4, hour: 10, minute: 0, second: second)
 
         assert delay == 7 * 3600 * 24 * 1000
       end)
