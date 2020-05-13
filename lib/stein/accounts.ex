@@ -79,6 +79,33 @@ defmodule Stein.Accounts do
   @type user_schema() :: atom()
 
   @doc """
+  Find a user by their email address
+
+  Trims and downcases the email to find an existing user. Checks against
+  the `lower` unique index on their email that should be set up when using
+  Stein.
+  """
+  def find_by_email(repo, schema, email) do
+    email =
+      email
+      |> String.trim()
+      |> String.downcase()
+
+    query =
+      schema
+      |> Query.where([s], fragment("lower(?) = ?", s.email, ^email))
+      |> Query.limit(1)
+
+    case repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      user ->
+        {:ok, user}
+    end
+  end
+
+  @doc """
   Hash the changed password in a changeset
 
   - Skips if the changeset is invalid
@@ -118,21 +145,13 @@ defmodule Stein.Accounts do
   """
   @spec validate_login(Stein.repo(), user_schema(), email(), password()) ::
           {:error, :invalid} | {:ok, user()}
-  def validate_login(repo, struct, email, password) do
-    email = String.downcase(email)
-
-    user =
-      struct
-      |> Query.where([s], fragment("lower(?) = ?", s.email, ^email))
-      |> Query.limit(1)
-      |> repo.one()
-
-    case user do
-      nil ->
+  def validate_login(repo, schema, email, password) do
+    case find_by_email(repo, schema, email) do
+      {:error, :not_found} ->
         Bcrypt.no_user_verify()
         {:error, :invalid}
 
-      user ->
+      {:ok, user} ->
         check_password(user, password)
     end
   end
@@ -219,12 +238,9 @@ defmodule Stein.Accounts do
   - `password_reset_expires_at`, type `utc_datetime`
   """
   @spec start_password_reset(Stein.repo(), user_schema(), email(), user_fun()) :: :ok
-  def start_password_reset(repo, struct, email, success_fun \\ fn _user -> :ok end) do
-    case repo.get_by(struct, email: email) do
-      nil ->
-        :ok
-
-      user ->
+  def start_password_reset(repo, schema, email, success_fun \\ fn _user -> :ok end) do
+    case find_by_email(repo, schema, email) do
+      {:ok, user} ->
         expires_at = DateTime.add(Time.now(), 3600, :second)
 
         user
@@ -234,6 +250,9 @@ defmodule Stein.Accounts do
         |> repo.update()
         |> maybe_run_success(success_fun)
 
+        :ok
+
+      {:error, :not_found} ->
         :ok
     end
   end
