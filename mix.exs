@@ -4,7 +4,7 @@ defmodule Stein.MixProject do
   def project do
     [
       app: :stein,
-      version: "0.5.4",
+      version: "0.5.5",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
