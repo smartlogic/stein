@@ -59,6 +59,7 @@ defmodule Stein.Pagination do
       |> exclude(:order_by)
       |> exclude(:preload)
       |> exclude(:group_by)
+      |> exclude(:join)
       |> repo.one()
       |> ensure_number()
 
